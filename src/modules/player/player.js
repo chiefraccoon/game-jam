@@ -4,24 +4,19 @@ import Bullet from '../bullet';
 import * as CONSTANTS from './constants';
 
 class Player {
-    constructor(game, config) {
+    constructor({game,  mesh, controls, position}) {
         this._bullets = [];
         this._direction = null;
         this._game = game;
-        this._config = config;
+        this.controls = controls;
 
         this.bullet = new Bullet(this._game);
-        this.model = BABYLON.Mesh.CreateBox(config.name, 0.5, this._game.scene);
-
-        this.model.ellipsoid = new BABYLON.Vector3(1, 1, 1);
-        this.model.ellipsoidOffset = new BABYLON.Vector3(0, 0, 0);
+        this.model = mesh;
+        this.model.position.x = position.x;
+        this.model.position.y = position.y;
+        this.model.position.z = position.z;
         this.model.checkCollisions = true;
 
-        this.model.position.z = config.position.z || 0;
-        this.model.position.x = config.position.x || 0;
-        this.model.position.y = config.position.y || 0;
-        this.model.firesTimes = 0;
-        this.model.scaling.x = 2;
 
         this._attachMove();
         this._attachShoot();
@@ -42,7 +37,7 @@ class Player {
 
     _attachMove() {
         window.addEventListener('keydown', (event) => {
-            this._direction = this._config.controls[event.keyCode];
+            this._direction = this.controls[event.keyCode];
         });
         window.addEventListener('keyup', () => {
             this._direction = null;
