@@ -1,6 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+
 
 module.exports = {
     entry: './src/index.js',
@@ -28,7 +30,9 @@ module.exports = {
             template: 'template/index.html'
         }),
         new webpack.NamedModulesPlugin(),
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin(),
+        new CopyWebpackPlugin([ { from: 'public/models', to: 'models' } ])
+
     ],
     devtool: 'source-map',
     devServer: {
