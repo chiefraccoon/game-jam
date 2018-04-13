@@ -99,36 +99,34 @@ class Game {
             }
         );
 
-        this.enemies = [
-            {
-                name: 'enemy_1',
-                position: {
-                    x: 5,
-                    y: 2,
-                    z: 0
-                }
-            },
-            {
-                name: 'enemy_2',
-                position: {
-                    x: 8,
-                    y: 2,
-                    z: 0
-                }
+        this.enemies.enemy_1 = new Enemy(this, {
+            name: 'enemy_1',
+            position: {
+                x: 5,
+                y: 2,
+                z: 0
             }
-        ].map(enemy => new Enemy(this, enemy));
+        });
+        this.enemies.enemy_2 = new Enemy(this, {
+            name: 'enemy_2',
+            position: {
+                x: 8,
+                y: 2,
+                z: 0
+            }
+        });
 
         this.camera = new Camera(
             this,
             {
                 camera: {
-                    radius: 20,
-                    heightOffset: 20,
+                    radius: 50,
+                    heightOffset: 50,
                     rotationOffset: 180,
                     cameraAcceleration: 0.01,
                     maxCameraSpeed: 20,
                 },
-                maxDistanceBetweenPlayers: 20
+                maxDistanceBetweenPlayers: 50
             }
         );
     }

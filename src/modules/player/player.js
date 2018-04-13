@@ -1,14 +1,16 @@
 import * as BABYLON from "babylonjs";
 
-import { vecToLocal } from '../utils';
+import Bullet from '../bullet';
 import * as CONSTANTS from './constants';
 
 class Player {
     constructor(game, config) {
+        this._bullets = [];
         this._direction = null;
         this._game = game;
         this._config = config;
 
+        this.bullet = new Bullet(this._game);
         this.model = BABYLON.Mesh.CreateBox(config.name, 0.5, this._game.scene);
 
         this.model.ellipsoid = new BABYLON.Vector3(1, 1, 1);
@@ -26,6 +28,9 @@ class Player {
 
         this._game.scene.registerBeforeRender(() => {
             this._move();
+            this._bullets.map(bullet =>
+                bullet.moveWithCollisions(new BABYLON.Vector3(bullet.position.x * 0.07, 0, 0))
+            );
         });
     }
 
@@ -64,28 +69,22 @@ class Player {
     }
 
     _shoot() {
-        const origin = this.model.position;
-        let bullet = BABYLON.Mesh.CreateSphere('bullet' + this.model.firesTimes, 1, 0.1, this._game.scene);
-        let animationBox = new BABYLON.Animation("bulletAnim", "position", 200, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
-        let keys = [];
+        let bullet = this.bullet.model.clone('bullet' + this.model.firesTimes);
+        bullet.position.z = this.model.position.z || 0;
+        bullet.position.x = this.model.position.x + 2 || 0;
+        bullet.position.y = this.model.position.y || 0;
+        bullet.checkCollisions = true;
 
-        bullet.position.x = origin.x;
-        bullet.position.y = origin.y;
-        bullet.animations = [];
+        bullet.onCollide = (event) => {
+            setTimeout(() => {
+                bullet.dispose();
+                if (this._game.enemies[event.name]) {
+                    this._game.enemies[event.name].setDamage(55);
+                }
+            }, 0);
+        };
 
-        keys.push({
-            frame: 0,
-            value: this.model.absolutePosition.clone()
-        });
-        keys.push({
-            frame: 100,
-            value: this.model.absolutePosition.add(vecToLocal(new BABYLON.Vector3(CONSTANTS.BULLET_SPEED, 0, 0), this.model))
-        });
-        animationBox.setKeys(keys);
-        bullet.animations.push(animationBox);
-
-        this._game.scene.beginAnimation(bullet, 0, 30, true);
-
+        this._bullets.push(bullet);
         this.model.firesTimes++;
     }
 }
