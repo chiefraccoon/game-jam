@@ -50,15 +50,19 @@ class Player {
         switch (this._direction) {
             case CONSTANTS.UP:
                 this.model.moveWithCollisions(new BABYLON.Vector3(0, 0, 1 * speedCharacter));
+                this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis( new BABYLON.Vector3(0, 1, 0), (Math.PI+Math.PI/2)  );
                 break;
             case CONSTANTS.DOWN:
                 this.model.moveWithCollisions(new BABYLON.Vector3(0, 0, -1 * speedCharacter));
+                this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis( new BABYLON.Vector3(0, 1, 0), Math.PI / 2 );
                 break;
             case CONSTANTS.LEFT:
                 this.model.moveWithCollisions(new BABYLON.Vector3(-1 * speedCharacter, 0, 0));
+                this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis( new BABYLON.Vector3(0, 1, 0), Math.PI );
                 break;
             case CONSTANTS.RIGHT:
                 this.model.moveWithCollisions(new BABYLON.Vector3(1 * speedCharacter, 0, 0));
+                this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis( new BABYLON.Vector3(0, 1, 0), 2*Math.PI  );
                 break;
         }
     }
