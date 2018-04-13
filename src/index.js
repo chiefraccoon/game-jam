@@ -46,3 +46,7 @@ engine.runRenderLoop(function () {
 window.addEventListener("resize", function () {
     engine.resize();
 });
+
+if (module.hot) {
+    module.hot.accept();
+}

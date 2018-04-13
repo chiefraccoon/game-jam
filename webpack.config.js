@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -25,12 +26,15 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'GameJam',
             template: 'template/index.html'
-        })
+        }),
+        new webpack.NamedModulesPlugin(),
+        new webpack.HotModuleReplacementPlugin()
     ],
     devtool: 'source-map',
     devServer: {
         contentBase: path.join(__dirname, "dist"),
         compress: true,
-        port: 9000
+        port: 9000,
+        hot: true
     }
 };
