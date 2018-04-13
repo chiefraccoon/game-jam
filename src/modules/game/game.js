@@ -8,6 +8,7 @@ class Game {
         this.canvas = document.getElementById('render-canvas');
         this.engine = new BABYLON.Engine(this.canvas, true);
 
+        this.level = null;
         this.scene = null;
         this.camera = null;
         this.players = {};
@@ -31,6 +32,17 @@ class Game {
     _initScene() {
         // This creates a basic Babylon Scene object (non-mesh)
         this.scene = new BABYLON.Scene(this.engine);
+        this.scene.enablePhysics();
+
+
+        this.ground = BABYLON.Mesh.CreateGround("ground1", 100, 100, 100, this.scene);
+        this.ground.physicsImpostor = new BABYLON.PhysicsImpostor(this.ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9 }, this.scene);
+        this.ground.isVisible = false;
+        this.ground.checkCollisions = true;
+
+        // const gravityVector = new BABYLON.Vector3(0,-9.81, 0);
+        // const physicsPlugin = new BABYLON.CannonJSPlugin();
+        this.scene.collisionsEnabled = true;
 
         // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
         const light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), this.scene);
@@ -41,7 +53,7 @@ class Game {
 
         BABYLON.SceneLoader.ImportMesh("", "./models/", "stage1.babylon", this.scene, function (newMeshes) {
             // Set the target of the camera to the first imported mesh
-            camera.target = newMeshes[0];
+            this.level = newMeshes[0];
         });
     }
 
@@ -53,7 +65,12 @@ class Game {
             this,
             {
                 name: 'player_1',
-                position: {x: -1, y: 1, z: 0},
+                position: {
+                    // x: this.level.position.x,
+                    x: -1,
+                    y: 2,
+                    z: 0
+                },
                 controls: {
                     119: CONSTANTS.UP, // w
                     115: CONSTANTS.DOWN, // s
@@ -67,7 +84,12 @@ class Game {
             this,
             {
                 name: 'player_2',
-                position: {x: 1, y: 1, z: 0},
+                position: {
+                    // x: -275.6614,
+                    x: 1,
+                    y: 2,
+                    z: 0
+                },
                 controls: {
                     56: CONSTANTS.UP, // 8
                     53: CONSTANTS.DOWN, // 5

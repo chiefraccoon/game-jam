@@ -11,6 +11,12 @@ class Player {
         this._config = config;
 
         this.model = BABYLON.Mesh.CreateSphere(config.name, 16, 1, this._game.scene);
+        this.model.physicsImpostor = new BABYLON.PhysicsImpostor(this.model, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9 }, this._game.scene);
+
+        this.model.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+        this.model.ellipsoidOffset = new BABYLON.Vector3(0, 0, 0);
+        this.model.checkCollisions = true;
+
         this.model.position.z = config.position.z || 0;
         this.model.position.x = config.position.x || 0;
         this.model.position.y = config.position.y || 0;
@@ -44,18 +50,20 @@ class Player {
     }
 
     _move(direction) {
+        const speedCharacter = 0.1;
+
         switch (direction) {
             case CONSTANTS.UP:
-                this.model.position.z = this.model.position.z + 1;
+                this.model.moveWithCollisions(new BABYLON.Vector3(0, 0, 1 * speedCharacter));
                 break;
             case CONSTANTS.DOWN:
-                this.model.position.z = this.model.position.z - 1;
+                this.model.moveWithCollisions(new BABYLON.Vector3(0, 0, -1 * speedCharacter));
                 break;
             case CONSTANTS.LEFT:
-                this.model.position.x = this.model.position.x - 1;
+                this.model.moveWithCollisions(new BABYLON.Vector3(-1 * speedCharacter, 0, 0));
                 break;
             case CONSTANTS.RIGHT:
-                this.model.position.x = this.model.position.x + 1;
+                this.model.moveWithCollisions(new BABYLON.Vector3(1 * speedCharacter, 0, 0));
                 break;
         }
     }
