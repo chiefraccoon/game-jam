@@ -3,15 +3,13 @@ import * as BABYLON from "babylonjs";
 import { vecToLocal } from '../utils';
 import * as CONSTANTS from './constants';
 
-const {BULLET_SPEED} = CONSTANTS
-
 class Player {
     constructor(game, config) {
+        this._direction = null;
         this._game = game;
         this._config = config;
 
-        this.model = BABYLON.Mesh.CreateSphere(config.name, 16, 1, this._game.scene);
-        this.model.physicsImpostor = new BABYLON.PhysicsImpostor(this.model, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9 }, this._game.scene);
+        this.model = BABYLON.Mesh.CreateBox(config.name, 0.5, this._game.scene);
 
         this.model.ellipsoid = new BABYLON.Vector3(1, 1, 1);
         this.model.ellipsoidOffset = new BABYLON.Vector3(0, 0, 0);
@@ -22,37 +20,34 @@ class Player {
         this.model.position.y = config.position.y || 0;
         this.model.firesTimes = 0;
         this.model.scaling.x = 2;
-        //this.model.rotation = new BABYLON.Vector3(0, 1, 0);
 
         this._attachMove();
+        this._attachShoot();
 
-        this.temp();
+        this._game.scene.registerBeforeRender(() => {
+            this._move();
+        });
     }
 
-    temp(){
-        window.addEventListener("keydown",  (e) => {
-            // Press space key to fire
-            if (e.keyCode === 32) {
-                this.shoot();
-            }
+    _attachShoot() {
+        window.addEventListener("keydown", (event) => {
+            if (event.keyCode === 32) this._shoot();
         });
-        const origin = this.model.position;
-        let target = BABYLON.Mesh.CreateSphere('target', 1,2,  this._game.scene);
-        target.position.x = origin.x+15;
-        target.position.y = origin.y;
     }
 
     _attachMove() {
-        window.addEventListener('keypress', (event) => {
-            const direction = this._config.controls[event.keyCode];
-            this._move(direction);
+        window.addEventListener('keydown', (event) => {
+            this._direction = this._config.controls[event.keyCode];
+        });
+        window.addEventListener('keyup', () => {
+            this._direction = null;
         });
     }
 
-    _move(direction) {
-        const speedCharacter = 0.1;
+    _move() {
+        const speedCharacter = 0.07;
 
-        switch (direction) {
+        switch (this._direction) {
             case CONSTANTS.UP:
                 this.model.moveWithCollisions(new BABYLON.Vector3(0, 0, 1 * speedCharacter));
                 break;
@@ -68,13 +63,13 @@ class Player {
         }
     }
 
-    shoot(){
+    _shoot() {
         const origin = this.model.position;
-        let bullet = BABYLON.Mesh.CreateSphere('bullet'+this.model.firesTimes, 1, 0.1,  this._game.scene);
+        let bullet = BABYLON.Mesh.CreateSphere('bullet' + this.model.firesTimes, 1, 0.1, this._game.scene);
         let animationBox = new BABYLON.Animation("bulletAnim", "position", 200, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
         let keys = [];
 
-        bullet.position.x = origin.x ;
+        bullet.position.x = origin.x;
         bullet.position.y = origin.y;
         bullet.animations = [];
 
@@ -84,12 +79,12 @@ class Player {
         });
         keys.push({
             frame: 100,
-            value: this.model.absolutePosition.add(vecToLocal(new BABYLON.Vector3(BULLET_SPEED, 0,0), this.model))
+            value: this.model.absolutePosition.add(vecToLocal(new BABYLON.Vector3(CONSTANTS.BULLET_SPEED, 0, 0), this.model))
         });
         animationBox.setKeys(keys);
         bullet.animations.push(animationBox);
 
-        this._game.scene.beginAnimation(bullet, 0, 30 , true);
+        this._game.scene.beginAnimation(bullet, 0, 30, true);
 
         this.model.firesTimes++;
     }
