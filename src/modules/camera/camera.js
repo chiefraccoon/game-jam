@@ -48,11 +48,11 @@ class Camera {
     }
 
     _getVectorCenterBetweenPlayers() {
-        return BABYLON.Vector3.Center(this._game.players.player_1.model.position, this._game.players.player_2.model.position);
+        return BABYLON.Vector3.Center(this._game.players.player_1.model.position, this._game.players.player_1.model.position);
     }
 
     _getVectorDistanceBetweenPlayers() {
-        return BABYLON.Vector3.Distance(this._game.players.player_1.model.position, this._game.players.player_2.model.position);
+        return BABYLON.Vector3.Distance(this._game.players.player_1.model.position, this._game.players.player_1.model.position);
 
     }
 }

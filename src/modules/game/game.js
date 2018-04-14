@@ -52,6 +52,13 @@ class Game {
                 return mesh.name === 'PLAYER2'
             });
 
+            this.enemies = _.reduce(newMeshes, function(result, item){
+                if(/ROBOT/.test(item.name)){
+                    result.push(item)
+                }
+                return result;
+            }, []);
+
             this.level = newMeshes[0];
 
 
@@ -85,37 +92,12 @@ class Game {
             }
         });
 
-        this.players.player_2 = new Player({
-            game: this,
-            mesh: this.player_2_Mesh,
-            controls: {
-                104: CONSTANTS.UP, // 8
-                101: CONSTANTS.DOWN, // 5
-                100: CONSTANTS.LEFT, // 4
-                102: CONSTANTS.RIGHT // 6
-            },
-            position: {
-                x: 0,
-                y: 2,
-                z: -2
-            }
-        });
+        //remove 2nd tank
+        this.player_2_Mesh.dispose();
 
-        this.enemies.enemy_1 = new Enemy(this, {
-            name: 'enemy_1',
-            position: {
-                x: 5,
-                y: 2,
-                z: 0
-            }
-        });
-        this.enemies.enemy_2 = new Enemy(this, {
-            name: 'enemy_2',
-            position: {
-                x: 8,
-                y: 2,
-                z: 0
-            }
+
+        _.map(this.enemies, enemy =>{
+            new Enemy({game: this, mesh: enemy});
         });
 
         this.camera = new Camera(
