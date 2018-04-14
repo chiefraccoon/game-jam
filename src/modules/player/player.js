@@ -4,11 +4,16 @@ import Bullet from '../bullet';
 import * as CONSTANTS from './constants';
 
 class Player {
-    constructor({game,  mesh, controls, position}) {
+    constructor({game, mesh, controls, position}) {
+        this._damage = 25;
+        this._firesTimes = 0;
+        this._healPoints = 100;
         this._bullets = [];
-        this._direction = null;
+        this._lastDirection = null;
+        this._currentDirection = null;
+
         this._game = game;
-        this.controls = controls;
+        this._controls = controls;
 
         this.bullet = new Bullet(this._game);
         this.model = mesh;
@@ -17,74 +22,86 @@ class Player {
         this.model.position.z = position.z;
         this.model.checkCollisions = true;
 
-
         this._attachMove();
         this._attachShoot();
 
         this._game.scene.registerBeforeRender(() => {
             this._move();
             this._bullets.map(bullet =>
-                bullet.moveWithCollisions(new BABYLON.Vector3(bullet.position.x * 0.07, 0, 0))
+                bullet.moveWithCollisions(bullet.directionVector)
             );
         });
     }
 
     _attachShoot() {
         window.addEventListener("keydown", (event) => {
-            if (event.keyCode === 32) this._shoot();
+            if (this._controls[event.keyCode] === CONSTANTS.SHOOT) this._shoot();
         });
     }
 
     _attachMove() {
         window.addEventListener('keydown', (event) => {
-            this._direction = this.controls[event.keyCode];
+            this._currentDirection = this._controls[event.keyCode];
         });
         window.addEventListener('keyup', () => {
-            this._direction = null;
+            this._currentDirection = null;
         });
     }
 
     _move() {
         const speedCharacter = 0.07;
 
-        switch (this._direction) {
+        switch (this._currentDirection) {
             case CONSTANTS.UP:
                 this.model.moveWithCollisions(new BABYLON.Vector3(0, 0, 1 * speedCharacter));
-                this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis( new BABYLON.Vector3(0, 1, 0), (Math.PI+Math.PI/2)  );
+                this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0, 1, 0), (Math.PI + Math.PI / 2));
+                this._lastDirection = CONSTANTS.UP;
                 break;
             case CONSTANTS.DOWN:
                 this.model.moveWithCollisions(new BABYLON.Vector3(0, 0, -1 * speedCharacter));
-                this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis( new BABYLON.Vector3(0, 1, 0), Math.PI / 2 );
+                this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0, 1, 0), Math.PI / 2);
+                this._lastDirection = CONSTANTS.DOWN;
                 break;
             case CONSTANTS.LEFT:
                 this.model.moveWithCollisions(new BABYLON.Vector3(-1 * speedCharacter, 0, 0));
-                this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis( new BABYLON.Vector3(0, 1, 0), Math.PI );
+                this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0, 1, 0), Math.PI);
+                this._lastDirection = CONSTANTS.LEFT;
                 break;
             case CONSTANTS.RIGHT:
                 this.model.moveWithCollisions(new BABYLON.Vector3(1 * speedCharacter, 0, 0));
-                this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis( new BABYLON.Vector3(0, 1, 0), 2*Math.PI  );
+                this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0, 1, 0), 2 * Math.PI);
+                this._lastDirection = CONSTANTS.RIGHT;
                 break;
         }
     }
 
+    setDamage(damage) {
+        this._healPoints = this._healPoints - damage;
+        if (this._healPoints < 0) {
+            this.model.dispose();
+        }
+    }
+
     _shoot() {
-        let bullet = this.bullet.model.clone('bullet' + this.model.firesTimes);
-        bullet.position.z = this.model.position.z || 0;
-        bullet.position.x = this.model.position.x + 2 || 0;
-        bullet.position.y = this.model.position.y || 0;
-        bullet.checkCollisions = true;
+        let bullet = this.bullet.model.clone('bullet_' + this._firesTimes);
+
+        bullet.position.z = this.model.position.z;
+        bullet.position.x = this.model.position.x;
+        bullet.position.y = this.model.position.y;
+
+        bullet.directionVector = this.bullet.getDirectionVector(this._lastDirection);
 
         bullet.onCollide = (event) => {
             setTimeout(() => {
                 bullet.dispose();
                 if (this._game.enemies[event.name]) {
-                    this._game.enemies[event.name].setDamage(55);
+                    this._game.enemies[event.name].setDamage(this._damage);
                 }
             }, 0);
         };
 
         this._bullets.push(bullet);
-        this.model.firesTimes++;
+        this._firesTimes++;
     }
 }
 

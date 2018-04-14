@@ -23,8 +23,6 @@ class Game {
         });
 
         this._initScene();
-
-
     }
 
     _initScene() {
@@ -47,18 +45,18 @@ class Game {
 
         BABYLON.SceneLoader.ImportMesh("", "./models/", "stage1.babylon", this.scene, (newMeshes) => {
             // Set the target of the camera to the first imported mesh
-
-
-            this.player_1_Mesh = _.find(newMeshes, function(mesh) { return  mesh.name === 'PLAYER1' });
-            this.player_2_Mesh = _.find(newMeshes, function(mesh) { return  mesh.name === 'PLAYER2' });
+            this.player_1_Mesh = _.find(newMeshes, function (mesh) {
+                return mesh.name === 'PLAYER1'
+            });
+            this.player_2_Mesh = _.find(newMeshes, function (mesh) {
+                return mesh.name === 'PLAYER2'
+            });
 
             this.level = newMeshes[0];
 
 
             this.scene.executeWhenReady(() => {
-
                 this._initGame();
-
                 this.engine.runRenderLoop(() => {
                     this.scene.render();
                 });
@@ -74,8 +72,9 @@ class Game {
             game: this,
             mesh: this.player_1_Mesh,
             controls: {
+                32: CONSTANTS.SHOOT, // space
                 87: CONSTANTS.UP, // w
-                83: CONSTANTS.DOWN, // sssss
+                83: CONSTANTS.DOWN, // s
                 65: CONSTANTS.LEFT, // a
                 68: CONSTANTS.RIGHT // d
             },
@@ -84,9 +83,9 @@ class Game {
                 y: 2,
                 z: 2
             }
-        } );
+        });
 
-        this.players.player_2 = new Player( {
+        this.players.player_2 = new Player({
             game: this,
             mesh: this.player_2_Mesh,
             controls: {

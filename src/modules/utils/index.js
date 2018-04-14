@@ -5,3 +5,7 @@ export function vecToLocal(vector, mesh){
     let v = BABYLON.Vector3.TransformCoordinates(vector, m);
     return v;
 }
+
+export function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
