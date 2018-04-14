@@ -1,7 +1,5 @@
-import * as BABYLON from "babylonjs";
-
 import Bullet from "../bullet";
-import {getRandomArbitrary} from '../utils';
+import { getRandomArbitrary } from '../utils';
 
 class Enemy {
     constructor({game, mesh}) {
@@ -15,24 +13,25 @@ class Enemy {
         this.bullet = new Bullet(this._game);
         this.model = mesh;
         this.model.checkCollisions = true;
-/*
+
         this._game.scene.registerBeforeRender(() => {
             this._bullets.map(bullet =>
-                bullet.moveWithCollisions(new BABYLON.Vector3(bullet.position.x * 0.07, 0, 0))
+                bullet.moveWithCollisions(bullet.directionVector)
             );
         });
 
-        this._shootCycle();*/
+        this._shootCycle();
     }
 
     _shootCycle() {
         this._shootTimeout = setTimeout(() => {
             this._shoot();
             this._shootCycle();
-        }, getRandomArbitrary(500, 1500));
+        }, getRandomArbitrary(500, 2500));
     }
 
     setDamage(damage) {
+        console.log('setDamage', this.model.name);
         this._healPoints = this._healPoints - damage;
         if (this._healPoints < 0) {
             window.clearTimeout(this._shootTimeout);
@@ -41,11 +40,15 @@ class Enemy {
     }
 
     _shoot() {
+
         let bullet = this.bullet.model.clone('enemy_bullet_' + this._firesTimes);
-        bullet.position.z = this.model.position.z || 0;
-        bullet.position.x = this.model.position.x + 2 || 0;
-        bullet.position.y = this.model.position.y || 0;
-        bullet.checkCollisions = true;
+
+        bullet.position.z = this.model.position.z;
+        bullet.position.x = this.model.position.x;
+        bullet.position.y = this.model.position.y + 1;
+
+        const direction = this.bullet.getDirectionString(this.model.forward);
+        bullet.directionVector = this.bullet.getDirectionVector(direction, 0.5);
 
         bullet.onCollide = (event) => {
             setTimeout(() => {
@@ -58,6 +61,10 @@ class Enemy {
 
         this._bullets.push(bullet);
         this._firesTimes++;
+
+        setTimeout(() => {
+            bullet.dispose()
+        }, 500);
     }
 }
 

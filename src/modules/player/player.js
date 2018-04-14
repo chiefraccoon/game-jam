@@ -21,6 +21,7 @@ class Player {
         this.model.position.y = position.y;
         this.model.position.z = position.z;
         this.model.checkCollisions = true;
+        this.model.onCollide = (event) => console.log(event);
 
         this._attachMove();
         this._attachShoot();
@@ -89,7 +90,7 @@ class Player {
         bullet.position.x = this.model.position.x;
         bullet.position.y = this.model.position.y;
 
-        bullet.directionVector = this.bullet.getDirectionVector(this._lastDirection);
+        bullet.directionVector = this.bullet.getDirectionVector(this._lastDirection, 1);
 
         bullet.onCollide = (event) => {
             setTimeout(() => {
@@ -102,6 +103,10 @@ class Player {
 
         this._bullets.push(bullet);
         this._firesTimes++;
+
+        setTimeout(() => {
+            bullet.dispose()
+        }, 700);
     }
 }
 
