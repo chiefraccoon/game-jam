@@ -49,7 +49,7 @@ class Player {
     }
 
     _move() {
-        const speedCharacter = 0.07;
+        const speedCharacter = 0.21;
 
         switch (this._currentDirection) {
             case CONSTANTS.UP:

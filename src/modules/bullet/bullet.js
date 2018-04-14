@@ -3,10 +3,10 @@ import * as BABYLON from "babylonjs";
 import { CONSTANTS } from '../player';
 
 class Bullet {
-    constructor(game) {
+    constructor(game, enemy ) {
         this._game = game;
-        this.model = game.MPlayerBullet;
-        this.model.setEnabled(false);
+        this.model = enemy ?  game.MEnemyBullet : game.MPlayerBullet;
+
     }
 
     getDirectionVector(direction, coeff) {

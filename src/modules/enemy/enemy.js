@@ -10,7 +10,7 @@ class Enemy {
         this._shootTimeout = null;
         this._firesTimes = 0;
 
-        this.bullet = new Bullet(this._game);
+        this.bullet = new Bullet(this._game, true);
         this.model = mesh;
         this.model.checkCollisions = true;
 
@@ -48,6 +48,7 @@ class Enemy {
 
         const direction = this.bullet.getDirectionString(this.model.forward);
         bullet.directionVector = this.bullet.getDirectionVector(direction, 0.5);
+        bullet.rotationQuaternion = this.bullet.getRotationAxis(direction);
 
         bullet.onCollide = (event) => {
             setTimeout(() => {

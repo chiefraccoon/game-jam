@@ -62,9 +62,12 @@ class Game {
             this.MPlayerBullet = _.find(newMeshes, function (mesh) {
                 return mesh.name === 'PlayerBullet'
             });
+            this.MPlayerBullet.setEnabled(false);
+
             this.MEnemyBullet = _.find(newMeshes, function (mesh) {
                 return mesh.name === 'EnemyBullet'
             });
+            this.MEnemyBullet.setEnabled(false);
 
             this.level = newMeshes[0];
 
