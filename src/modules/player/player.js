@@ -9,7 +9,7 @@ class Player {
         this._firesTimes = 0;
         this._healPoints = 100;
         this._bullets = [];
-        this._lastDirection = null;
+        this._lastDirection = CONSTANTS.RIGHT;
         this._currentDirection = null;
 
         this._game = game;
@@ -21,8 +21,6 @@ class Player {
         this.model.position.y = position.y;
         this.model.position.z = position.z;
         this.model.checkCollisions = true;
-        //set initial direction
-        this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0, 1, 0), 2 * Math.PI);
 
         this._attachMove();
         this._attachShoot();
@@ -92,6 +90,7 @@ class Player {
         bullet.position.y = this.model.position.y;
 
         bullet.directionVector = this.bullet.getDirectionVector(this._lastDirection);
+        bullet.rotationQuaternion = this.bullet.getRotationAxis(this._lastDirection);
 
         bullet.onCollide = (event) => {
             setTimeout(() => {
