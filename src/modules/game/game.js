@@ -17,6 +17,8 @@ class Game {
         this.player_2_Mesh = null;
         this.players = {};
         this.enemies = [];
+        this.MPlayerBullet = null;
+        this.MEnemyBullet = null;
 
         window.addEventListener('resize', () => {
             this.engine.resize();
@@ -40,7 +42,6 @@ class Game {
         const light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), this.scene);
 
         // Default intensity is 1. Let's dim the light a small amount
-        light.intensity = 0.7;
 
         BABYLON.SceneLoader.ImportMesh("", "./models/", "stage1.babylon", this.scene, (newMeshes) => {
             // Set the target of the camera to the first imported mesh
@@ -57,6 +58,16 @@ class Game {
                 }
                 return result;
             }, []);
+
+            this.MPlayerBullet = _.find(newMeshes, function (mesh) {
+                return mesh.name === 'PlayerBullet'
+            });
+            this.MPlayerBullet.setEnabled(false);
+
+            this.MEnemyBullet = _.find(newMeshes, function (mesh) {
+                return mesh.name === 'EnemyBullet'
+            });
+            this.MEnemyBullet.setEnabled(false);
 
             this.level = newMeshes[0];
 
@@ -87,7 +98,7 @@ class Game {
             position: {
                 x: 0,
                 y: 2,
-                z: 2
+                z: 0
             }
         });
 
@@ -104,13 +115,13 @@ class Game {
             this,
             {
                 camera: {
-                    radius: 50,
-                    heightOffset: 50,
+                    radius: 20,
+                    heightOffset: 20,
                     rotationOffset: 180,
                     cameraAcceleration: 0.01,
                     maxCameraSpeed: 20,
                 },
-                maxDistanceBetweenPlayers: 50
+                maxDistanceBetweenPlayers: 20
             }
         );
     }
