@@ -9,7 +9,7 @@ class Player {
         this._firesTimes = 0;
         this._healPoints = 100;
         this._bullets = [];
-        this._lastDirection = null;
+        this._lastDirection = CONSTANTS.RIGHT;
         this._currentDirection = null;
 
         this._game = game;
@@ -21,7 +21,6 @@ class Player {
         this.model.position.y = position.y;
         this.model.position.z = position.z;
         this.model.checkCollisions = true;
-        this.model.onCollide = (event) => console.log(event);
 
         this._attachMove();
         this._attachShoot();
@@ -91,6 +90,7 @@ class Player {
         bullet.position.y = this.model.position.y;
 
         bullet.directionVector = this.bullet.getDirectionVector(this._lastDirection, 1);
+        bullet.rotationQuaternion = this.bullet.getRotationAxis(this._lastDirection);
 
         bullet.onCollide = (event) => {
             setTimeout(() => {
