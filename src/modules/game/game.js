@@ -38,7 +38,6 @@ class Game {
 
         // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
         const light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), this.scene);
-        const light2 = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), this.scene);
 
         // Default intensity is 1. Let's dim the light a small amount
         light.intensity = 0.7;
@@ -94,6 +93,7 @@ class Game {
 
         //remove 2nd tank
         this.player_2_Mesh.dispose();
+
 
 
         _.map(this.enemies, enemy =>{

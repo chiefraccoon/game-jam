@@ -21,6 +21,8 @@ class Player {
         this.model.position.y = position.y;
         this.model.position.z = position.z;
         this.model.checkCollisions = true;
+        //set initial direction
+        this.model.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0, 1, 0), 2 * Math.PI);
 
         this._attachMove();
         this._attachShoot();
