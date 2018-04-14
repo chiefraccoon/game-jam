@@ -40,7 +40,6 @@ class Enemy {
     }
 
     _shoot() {
-
         let bullet = this.bullet.model.clone('enemy_bullet_' + this._firesTimes);
 
         bullet.position.z = this.model.position.z;

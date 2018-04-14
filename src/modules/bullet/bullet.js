@@ -31,6 +31,8 @@ class Bullet {
             return CONSTANTS.LEFT;
         } else if (forwardObject.z === -1) {
             return CONSTANTS.RIGHT;
+        } else {
+            return CONSTANTS.UP;
         }
     }
 
